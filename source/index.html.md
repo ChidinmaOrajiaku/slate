@@ -740,7 +740,7 @@ This endpoint counts books in the library.
 }
 ```
 
-This endpoint counts rentedbooks in the library.
+This endpoint counts all rentedbooks in the library.
 
 ### HTTP Request
 
