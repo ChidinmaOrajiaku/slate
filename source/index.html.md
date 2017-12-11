@@ -1,10 +1,7 @@
 ---
-title: API Reference
+title: HelloBooks API
 
 language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
   - javascript
 
 toc_footers:
@@ -19,221 +16,1049 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Hello-Books is a simple application that helps manage a library and its processes like stocking, tracking and renting books. With this application users are able to find and rent books. The application also has an admin section where the admin can add books, delete books, edit books, increase the quantity of a book etc.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+# Development
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+The application was developed with [Node.js-Express](https://docs.npmjs.com/getting-started/installing-node). The [PostgreSQL](https://www.postgresql.org/download/) database was used with Sequelize as the ORM
+
+# Installation
+
+1. Ensure you have NodeJs and PostgreSQL installed
+2. Clone the repository https://github.com/ChidinmaOrajiaku/HelloBooksProject.git
+3. Change your directory "cd HelloBooksProject"
+4. Install all dependencies "npm install"
+5. Start the app with "npm start:serv" for development 
+6. Use [Postman](https://www.getpostman.com/) to consume the API
 
 # Authentication
 
-> To authorize, use this code:
+All routes are jwt-token protected. On login (with email and password), a token is generated. HelloBooks expects the token to be included in the body or headers as x-token. All API requests to the server are stated below.
 
-```ruby
-require 'kittn'
+# Api Summary
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+Below are the endpoints and thier functionalities
+<table>
+<tr>
+<th> API</th>
+<th> Functionality </th>
+</tr>
+
+<tr>
+<td>POST /api/v1/users/signup </td>
+<td> Create new users </td>
+</tr>
+
+<tr>
+<td>POST /api/v1/users/signin </td>
+<td> Login users </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/:userId</td>
+<td> Get user details </td>
+</tr>
+
+<tr>
+<td>PUT /api/v1/users/:userId </td>
+<td> Update password </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/books </td>
+<td> List all books </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/books/:id </td>
+<td> List a book </td>
+</tr>
+
+<tr>
+<td>POST /api/v1/users/:userId/books </td>
+<td> Borrow a book </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/:userId/history </td>
+<td> List all books borrowed </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/:userId/books </td>
+<td> List all books borrowed but not returned </td>
+</tr>
+
+<tr>
+<td>PUT /api/v1/users/:userId/books </td>
+<td> Return book borrowed </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users </td>
+<td> Admin count all users </td>
+</tr>
+
+<tr>
+<td>POST /api/v1/users/books </td>
+<td> Admin add books </td>
+</tr>
+
+<tr>
+<td>PUT /api/v1/books/:bookId </td>
+<td> Admin modify books </td>
+</tr>
+
+<tr>
+<td>DELETE /api/v1/books/:bookId </td>
+<td> Admin delete books </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/books </td>
+<td> Admin count all books </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/books/history </td>
+<td> Admin count all rented books </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/books/unreturned/history </td>
+<td> Admin count all not returned books </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/users/books/unreturned </td>
+<td> Admin list all not returned books </td>
+</tr>
+
+<tr>
+<td>POST /api/v1/books/category </td>
+<td> Admin create category </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/books/category/history </td>
+<td> Admin count category </td>
+</tr>
+
+<tr>
+<td>GET /api/v1/books/category/all </td>
+<td> Admin list all categories </td>
+</tr>
+<table/>
+
+# Users
+
+## Sign Up
+
+> Request
+
+```json
+{
+	"firstname": "daddy",
+	"lastname": "daddy",
+	"username": "daddy",
+	"password": "daddy",
+	"email": "daddy@gmail.com"
+}
+```
+> Response
+
+```json
+{
+    "message": "Account created! Proceed to login",
+    "username": "daddy"
+}
 ```
 
-```python
-import kittn
+This endpoint creates a new user.
 
-api = kittn.authorize('meowmeowmeow')
+### HTTP Request
+
+`POST https://hello-books-bootcamp.herokuapp.com/api/v1/users/signup`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 201 created
+* Body (application/json)
+
+## Login
+
+> Request
+
+```json
+{
+	"password": "daddy",
+	"email": "daddy@gmail.com"
+}
+```
+> Response
+
+```json
+{
+    "message": "Successfully logged in",
+    "username": "daddy",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhZGR5Iiwicm9sZSI6InVzZXIiLCJpZCI6MTAsImlhdCI6MTUxMjk5NDM2OCwiZXhwIjoxNTEzMDgwNzY4fQ.hjUauS-WAvRUEM4xZYgTkJzdhUmNYpSttK35FO8CvW4"
+}
 ```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+This endpoint logs in user.
+
+### HTTP Request
+
+`POST https://hello-books-bootcamp.herokuapp.com/api/v1/users/signin`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+
+## Get user details
+
+> Response
+
+```json
+{
+    "firstname": "daddy",
+    "lastname": "daddy",
+    "email": "daddy@gmail.com",
+    "username": "daddy"
+}
 ```
 
-```javascript
-const kittn = require('kittn');
+This endpoint gets the user details.
 
-let api = kittn.authorize('meowmeowmeow');
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId`
+
+### Request
+
+* Body (application/json)
+* userId: 10
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+
+## Update user password
+
+> Request
+
+```json
+{
+	"password": "daddy2",
+	"verifyPassword": "daddy"
+}
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+> Response
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+```json
+{
+    "message": "Succesfully Updated"
+}
 ```
 
-```python
-import kittn
+This endpoint updates the user password.
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+### HTTP Request
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
+`PUT https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId`
 
-```javascript
-const kittn = require('kittn');
+### Request
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
+* Body (application/json)
+* userId: 10
 
-> The above command returns JSON structured like this:
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## List all books
+
+> Response
 
 ```json
 [
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+    {
+        "id": 1,
+        "title": "Blue Smoke",
+        "author": "Nora Roberts",
+        "category": "Fiction",
+        "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+        "review": "Nice Book",
+        "createdAt": "2017-11-19T23:10:10.090Z",
+        "updatedAt": "2017-11-19T23:10:10.090Z",
+        "userId": null,
+        "categoryId": null
+    },
+    {
+        "id": 2,
+        "title": "Blue Smoke",
+        "author": "Nora Roberts",
+        "category": "Fiction",
+        "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+        "review": "Nice Book",
+        "createdAt": "2017-11-19T23:11:27.100Z",
+        "updatedAt": "2017-11-22T11:36:41.413Z",
+        "userId": null,
+        "categoryId": null
+    }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint allows the user get all books.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/books`
 
-### Query Parameters
+### Request
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+* Body (application/json)
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
+### Response
 
-## Get a Specific Kitten
+* Status: 200 success
+* Body (application/json)
 
-```ruby
-require 'kittn'
+## List a book
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
+> Response
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "id": 1,
+    "title": "Blue Smoke",
+    "author": "Nora Roberts",
+    "category": "Fiction",
+    "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+    "review": "Nice Book",
+    "createdAt": "2017-11-19T23:10:10.090Z",
+    "updatedAt": "2017-11-19T23:10:10.090Z",
+    "userId": null,
+    "categoryId": null
 }
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+This endpoint gets a book.
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/books/:id`
 
-### URL Parameters
+### Request
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+* Body (application/json)
+* id: 1
 
-## Delete a Specific Kitten
+### Response
 
-```ruby
-require 'kittn'
+* Status: 200 success
+* Body (application/json)
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
+## Borrow a book
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
+> Request
 
 ```json
 {
-  "id": 2,
-  "deleted" : ":("
+	"bookId": "1"
 }
 ```
 
-This endpoint deletes a specific kitten.
+> Response
+
+```json
+{
+    "returned": false,
+    "id": 11,
+    "userId": 10,
+    "bookId": 1,
+    "toReturnDate": "2018-01-04",
+    "updatedAt": "2017-12-11T12:41:50.644Z",
+    "createdAt": "2017-12-11T12:41:50.644Z",
+    "returnDate": null,
+    "categoryId": null
+}
+```
+
+This endpoint allows the user borrow a book.
 
 ### HTTP Request
 
-`DELETE http://example.com/kittens/<ID>`
+`POST https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId/books`
 
-### URL Parameters
+### Request
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+* Body (application/json)
+* userId: 10
 
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## List all books borrowed
+
+> Response
+
+```json
+[
+    {
+        "id": 11,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2018-01-04",
+        "returnDate": null,
+        "userId": 10,
+        "createdAt": "2017-12-11T12:41:50.644Z",
+        "updatedAt": "2017-12-11T12:41:50.644Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    }
+]
+```
+
+This endpoint allows the user get all books borrowed.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId/history`
+
+### Request
+
+* Body (application/json)
+* userId: 10
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## List all books borrowed but not returned
+
+> Response
+
+```json
+[
+    {
+        "id": 11,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2018-01-04",
+        "returnDate": null,
+        "userId": 10,
+        "createdAt": "2017-12-11T12:41:50.644Z",
+        "updatedAt": "2017-12-11T12:41:50.644Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    }
+]
+```
+
+This endpoint allows the user get all books borrowed.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId/books`
+
+### Request
+
+* Body (application/json)
+* userId: 10
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Return book borrowed
+
+> Request
+
+```json
+{
+	"bookId": "1"
+}
+```
+
+> Response
+
+```json
+{
+    "message": "Successfully Returned"
+}
+```
+
+This endpoint allows the user return book borrowed.
+
+### HTTP Request
+
+`PUT https://hello-books-bootcamp.herokuapp.com/api/v1/users/:userId/books`
+
+### Request
+
+* Body (application/json)
+* userId: 10
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+
+# Admin
+
+<aside class="notice">This section can only be accessed by the administrator using an admin token. </aside>
+
+## Admin count all users
+
+> Response
+
+```json
+{
+    "count": 5
+}
+```
+
+This endpoint counts all users.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin add books
+
+> Request
+
+```json
+{
+	"title": "Morning, Noon and Night",
+	"author": "Sidney Sheldon",
+	"category": "Fiction",
+	"image": "https://images.gr-assets.com/books/1348785812l/900012.jpg",
+	"review": "Nice Book"
+}
+```
+
+> Response
+
+```json
+{
+    "message": "Succesfully added"
+}
+```
+
+This endpoint adds a new book.
+
+### HTTP Request
+
+`POST https://hello-books-bootcamp.herokuapp.com/api/v1/users/books`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 201 created
+* Body (application/json)
+
+## Admin modify books
+
+> Request
+
+```json
+{
+	"title": "Morning, Noon and Night",
+	"author": "Sidney",
+	"category": "Fiction",
+	"image": "https://images.gr-assets.com/books/1348785812l/900012.jpg",
+	"review": "Nice Book"
+}
+```
+
+> Response
+
+```json
+{
+    "id": 4,
+    "title": "Morning, Noon and Night",
+    "author": "Sidney",
+    "category": "Fiction",
+    "image": "https://images.gr-assets.com/books/1348785812l/900012.jpg",
+    "review": "Nice Book",
+    "createdAt": "2017-12-11T13:37:54.425Z",
+    "updatedAt": "2017-12-11T13:46:22.744Z",
+    "userId": null,
+    "categoryId": null
+}
+```
+
+This endpoint modifies a book.
+
+### HTTP Request
+
+`PUT https://hello-books-bootcamp.herokuapp.com/api/v1/books/:bookId`
+
+### Request
+
+* Body (application/json)
+* bookId: 4
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin delete books
+
+This endpoint deletes a book.
+
+### HTTP Request
+
+`DELETE https://hello-books-bootcamp.herokuapp.com/api/v1/books/:bookId`
+
+### Request
+
+* Body (application/json)
+* bookId: 4
+
+### Response
+
+* Status: 204 No content
+* Body (application/json)
+
+## Admin count all books
+
+> Response
+
+```json
+{
+    "count": 2,
+    "rows": [
+        {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        {
+            "id": 2,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:11:27.100Z",
+            "updatedAt": "2017-11-22T11:36:41.413Z",
+            "userId": null,
+            "categoryId": null
+        }
+    ]
+}
+```
+
+This endpoint counts books in the library.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/books`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin count all rented books
+
+> Response
+
+```json
+{
+    "count": 2,
+    "rows": [
+        {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        {
+            "id": 2,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:11:27.100Z",
+            "updatedAt": "2017-11-22T11:36:41.413Z",
+            "userId": null,
+            "categoryId": null
+        }
+    ]
+}
+```
+
+This endpoint counts rentedbooks in the library.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/books/history`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin count all not returned books
+
+> Response
+
+```json
+{
+    "count": 6,
+}
+```
+
+This endpoint counts all not returned books.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/books/unreturned/history`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin list all not returned books
+
+> Response
+
+```json
+[
+    {
+        "id": 1,
+        "bookId": null,
+        "returned": false,
+        "toReturnDate": "2017-12-16",
+        "returnDate": null,
+        "userId": 1,
+        "createdAt": "2017-11-22T16:52:28.005Z",
+        "updatedAt": "2017-11-22T16:52:28.005Z",
+        "categoryId": null,
+        "Book": null,
+        "Category": null
+    },
+    {
+        "id": 3,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2017-12-20",
+        "returnDate": null,
+        "userId": 1,
+        "createdAt": "2017-11-26T14:06:40.212Z",
+        "updatedAt": "2017-11-26T14:06:40.212Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    },
+    {
+        "id": 4,
+        "bookId": 2,
+        "returned": false,
+        "toReturnDate": "2017-12-20",
+        "returnDate": null,
+        "userId": 2,
+        "createdAt": "2017-11-26T15:08:11.151Z",
+        "updatedAt": "2017-11-26T15:08:11.151Z",
+        "categoryId": null,
+        "Book": {
+            "id": 2,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:11:27.100Z",
+            "updatedAt": "2017-11-22T11:36:41.413Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    },
+    {
+        "id": 5,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2017-12-20",
+        "returnDate": null,
+        "userId": 2,
+        "createdAt": "2017-11-26T15:08:39.138Z",
+        "updatedAt": "2017-11-26T15:08:39.138Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    },
+    {
+        "id": 10,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2017-12-20",
+        "returnDate": null,
+        "userId": 8,
+        "createdAt": "2017-11-26T19:07:48.599Z",
+        "updatedAt": "2017-11-26T19:07:48.599Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    },
+    {
+        "id": 11,
+        "bookId": 1,
+        "returned": false,
+        "toReturnDate": "2018-01-04",
+        "returnDate": null,
+        "userId": 10,
+        "createdAt": "2017-12-11T12:41:50.644Z",
+        "updatedAt": "2017-12-11T12:41:50.644Z",
+        "categoryId": null,
+        "Book": {
+            "id": 1,
+            "title": "Blue Smoke",
+            "author": "Nora Roberts",
+            "category": "Fiction",
+            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
+            "review": "Nice Book",
+            "createdAt": "2017-11-19T23:10:10.090Z",
+            "updatedAt": "2017-11-19T23:10:10.090Z",
+            "userId": null,
+            "categoryId": null
+        },
+        "Category": null
+    }
+]
+```
+
+This endpoint list all not returned books.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/books/unreturned`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin add category
+
+> Request
+
+```json
+{
+	"category": "Comic"
+}
+```
+
+> Response
+
+```json
+{
+    "id": 2,
+    "category": "Comic",
+    "updatedAt": "2017-12-11T14:11:59.065Z",
+    "createdAt": "2017-12-11T14:11:59.065Z",
+    "userId": null
+}
+```
+
+This endpoint adds category.
+
+### HTTP Request
+
+`POST https://hello-books-bootcamp.herokuapp.com/api/v1/books/category`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 201 created
+* Body (application/json)
+
+## Admin count category
+
+> Response
+
+```json
+{
+    "count": 2,
+}
+```
+
+This endpoint counts category.
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/books/category`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
+
+## Admin list all categories
+
+> Response
+
+```json
+[
+    {
+        "id": 1,
+        "category": "Fiction",
+        "createdAt": "2017-11-19T23:07:12.681Z",
+        "updatedAt": "2017-11-19T23:07:12.681Z",
+        "userId": null
+    },
+    {
+        "id": 2,
+        "category": "Comic",
+        "createdAt": "2017-12-11T14:11:59.065Z",
+        "updatedAt": "2017-12-11T14:11:59.065Z",
+        "userId": null
+    }
+]
+```
+
+This endpoint lists all categories
+
+### HTTP Request
+
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/books/category/all`
+
+### Request
+
+* Body (application/json)
+
+### Response
+
+* Status: 200 success
+* Body (application/json)
