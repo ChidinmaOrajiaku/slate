@@ -736,33 +736,7 @@ This endpoint counts books in the library.
 
 ```json
 {
-    "count": 2,
-    "rows": [
-        {
-            "id": 1,
-            "title": "Blue Smoke",
-            "author": "Nora Roberts",
-            "category": "Fiction",
-            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
-            "review": "Nice Book",
-            "createdAt": "2017-11-19T23:10:10.090Z",
-            "updatedAt": "2017-11-19T23:10:10.090Z",
-            "userId": null,
-            "categoryId": null
-        },
-        {
-            "id": 2,
-            "title": "Blue Smoke",
-            "author": "Nora Roberts",
-            "category": "Fiction",
-            "image": "https://res.cloudinary.com/andela-chidinma/image/upload/v1511133007/g2exfx6sgbymszspybts.jpg",
-            "review": "Nice Book",
-            "createdAt": "2017-11-19T23:11:27.100Z",
-            "updatedAt": "2017-11-22T11:36:41.413Z",
-            "userId": null,
-            "categoryId": null
-        }
-    ]
+    "count": 7
 }
 ```
 
@@ -770,7 +744,7 @@ This endpoint counts rentedbooks in the library.
 
 ### HTTP Request
 
-`GET https://hello-books-bootcamp.herokuapp.com/api/v1/users/books/history`
+`GET https://hello-books-bootcamp.herokuapp.com/api/v1/rentedbooks/history/all`
 
 ### Request
 
